@@ -49,7 +49,7 @@ public class PercolationStats {
         }
     }
 
-    private Site findRandomClosedSite(Percolation p) {
+    private Site<Integer,Integer> findRandomClosedSite(Percolation p) {
         Integer row = StdRandom.uniform(1, this.n);
         Integer col = StdRandom.uniform(1, this.n);
         while (p.isOpen(row, col)) {
