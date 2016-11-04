@@ -2,14 +2,12 @@ import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
-/**
- * Created by tadamski on 11/1/16.
- */
+/** Created by tadamski on 11/1/16. */
+@SuppressWarnings("WeakerAccess")
 public class PercolationStats {
 
     private final int n;
     private final int trials;
-    private final double[] percolationThresholds;
     private final double mean;
     private final double stddev;
 
@@ -20,8 +18,8 @@ public class PercolationStats {
 
         this.trials = trials;
         this.n = n;
-        this.percolationThresholds = new double[trials];
 
+        double [] percolationThresholds = new double[trials];
         int gridSize = n * n;
 
         for (int i = 0; i < trials; i++) {
@@ -36,16 +34,16 @@ public class PercolationStats {
             }
 
             double percolationThreshold = opened / gridSize;
-            this.percolationThresholds[i] = percolationThreshold;
+            percolationThresholds[i] = percolationThreshold;
         }
 
-        /** Mean */
-        this.mean = StdStats.mean(this.percolationThresholds);
+        /* Mean */
+        this.mean = StdStats.mean(percolationThresholds);
 
-        /** Standard Deviation */
+        /* Standard Deviation */
         if (this.trials == 1) this.stddev = Double.NaN;
         else {
-            this.stddev = StdStats.stddev(this.percolationThresholds);
+            this.stddev = StdStats.stddev(percolationThresholds);
         }
     }
 
@@ -57,7 +55,7 @@ public class PercolationStats {
             col = StdRandom.uniform(1, this.n);
         }
 
-        return new Site(row, col);
+        return new Site<>(row, col);
     }
 
     /** sample mean of percolation threshold */

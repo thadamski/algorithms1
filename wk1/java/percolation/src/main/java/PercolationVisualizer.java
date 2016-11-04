@@ -21,6 +21,7 @@ import java.awt.Font;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 
+@SuppressWarnings("ALL")
 public class PercolationVisualizer {
 
     // delay in miliseconds (controls animation speed)

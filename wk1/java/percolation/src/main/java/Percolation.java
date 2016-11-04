@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /** Created by tadamski on 10/30/16. */
+@SuppressWarnings("WeakerAccess")
 public class Percolation {
 
     private final int n;
@@ -20,7 +21,6 @@ public class Percolation {
         this.virtualTop = 0;
         this.virtualBottom = this.matrixSize + 1;
 
-        int topRowMax = n;
         int bottomRowMin = this.matrixSize - n;
 
 
@@ -28,7 +28,7 @@ public class Percolation {
         int quickUnionSize = this.matrixSize + 2;
         this.wqu = new WeightedQuickUnionUF(quickUnionSize);
         for (int i = 0; i < quickUnionSize; i++) {
-            if (i <= topRowMax) this.wqu.union(virtualTop, i);
+            if (i <= n) this.wqu.union(virtualTop, i);
             else if (i >= bottomRowMin) this.wqu.union(virtualBottom, i);
         }
 
@@ -90,10 +90,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validateBounds(row, col);
         int currentIdx = xyTo1D(row, col, this.n);
-        boolean open = this.opened[currentIdx];
-        boolean connectedToTop = this.wqu.connected(currentIdx, this.virtualTop);
-        boolean full = open && connectedToTop;
-        return full;
+        return this.opened[currentIdx] && this.wqu.connected(currentIdx, this.virtualTop);
     }
 
     /** does the system percolate? */
@@ -106,12 +103,10 @@ public class Percolation {
     }
 
     private void validateBounds(int row, int col) {
-        int x = row;
-        int y = col;
         int n = this.n;
 
-        if ((x < 1 || x > n) || (y < 1 || y > n)) {
-            throw new IndexOutOfBoundsException("(" + x + ", "  + y + ") not within (" + n + ", " + n + ") grid");
+        if ((row < 1 || row > n) || (col < 1 || col > n)) {
+            throw new IndexOutOfBoundsException("(" + row + ", "  + col + ") not within (" + n + ", " + n + ") grid");
         }
     }
 
