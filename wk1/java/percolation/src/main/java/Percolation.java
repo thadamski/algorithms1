@@ -101,7 +101,7 @@ public class Percolation {
         return this.wqu.connected(this.virtualBottom, this.virtualTop);
     }
 
-    protected int xyTo1D(int row, int col, int n) {
+    private int xyTo1D(int row, int col, int n) {
         return (row * n) - (n - col);
     }
 
@@ -115,12 +115,6 @@ public class Percolation {
         }
     }
 
-    protected boolean connected(int p, int q) {
-        return this.wqu.connected(p, q);
-    }
-
     /** test client (optional) */
-    public static void main(String[] args) {
-
-    }
+    public static void main(String[] args) {}
 }

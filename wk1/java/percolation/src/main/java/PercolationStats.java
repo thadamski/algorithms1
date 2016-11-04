@@ -45,7 +45,7 @@ public class PercolationStats {
         /** Standard Deviation */
         if (this.trials == 1) this.stddev = Double.NaN;
         else {
-            this.stddev = Math.sqrt(StdStats.stddev(this.percolationThresholds));
+            this.stddev = StdStats.stddev(this.percolationThresholds);
         }
     }
 
@@ -84,9 +84,9 @@ public class PercolationStats {
     public static void main(String[] args) {
         if (args.length != 2) throw new IllegalArgumentException("Must provide 2 command line arguments");
         int n = Integer.parseInt(args[0]);
-        int T = Integer.parseInt(args[1]);
+        int trials = Integer.parseInt(args[1]);
 
-        PercolationStats ps = new PercolationStats(n, T);
+        PercolationStats ps = new PercolationStats(n, trials);
 
         double mean = ps.mean();
         double stddev = ps.stddev();
