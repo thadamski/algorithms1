@@ -100,7 +100,8 @@ public class Percolation {
 
     /** does the system percolate? */
     public boolean percolates() {
-        return this.wqu.connected(this.virtualBottom, this.virtualTop);
+        return (this.n == 1 && this.opened[1]) ||
+            this.wqu.connected(this.virtualBottom, this.virtualTop);
     }
 
     private int xyTo1D(int row, int col, int n) {
