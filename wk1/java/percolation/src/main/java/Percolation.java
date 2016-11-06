@@ -6,7 +6,7 @@ public class Percolation {
     private final int n;
 
     private final int virtualTop;
-    private final int firstBottomRow;
+    private final int virtualBottom;
     private final int matrixSize;
     private final boolean[] opened;
     private final WeightedQuickUnionUF wqu;
@@ -18,25 +18,23 @@ public class Percolation {
 
         this.matrixSize = n * n;
         this.virtualTop = 0;
+        this.virtualBottom = this.matrixSize + 1;
 
-        this.firstBottomRow = this.matrixSize + 1 - n;
+        int firstBottomRow = this.matrixSize + 1 - n;
 
 
         // The top and bottom rows should be linked to the virtual top/bottom nodes
-        int quickUnionSize = this.matrixSize + 1;
+        int quickUnionSize = this.matrixSize + 2;
         this.wqu = new WeightedQuickUnionUF(quickUnionSize);
         for (int i = 0; i < quickUnionSize; i++) {
             if (i <= n) this.wqu.union(virtualTop, i);
+            else if (i >= firstBottomRow) this.wqu.union(virtualBottom, i);
         }
 
         // Pad the opened array so we can use 1 based indexing like the matrix
         int openedSize = this.matrixSize + 1;
         this.opened = new boolean[openedSize];
         for (int i = 0; i < openedSize; i++) this.opened[i] = false;
-    }
-
-    public boolean connected(int p, int q) {
-        return this.wqu.connected(p, q);
     }
 
     /** open site (row, col) if it is not open already */
@@ -102,12 +100,7 @@ public class Percolation {
 
     /** does the system percolate? */
     public boolean percolates() {
-        for (int i = this.firstBottomRow; i <= this.matrixSize; i ++) {
-            if (this.wqu.connected(i, this.virtualTop)) {
-                return true;
-            }
-        }
-        return false;
+        return this.wqu.connected(this.virtualBottom, this.virtualTop);
     }
 
     private int xyTo1D(int row, int col, int n) {

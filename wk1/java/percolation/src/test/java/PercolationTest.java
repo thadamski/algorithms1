@@ -96,17 +96,4 @@ public class PercolationTest extends TestCase {
         assertTrue(p.isFull(5, 4));
     }
 
-    public void testInput3() {
-        Percolation p = new Percolation(4);
-        p.open(3, 1);
-        assertTrue(p.isOpen(3, 1));
-        assertFalse(p.percolates());
-
-        p.open(2, 4);
-        assertTrue(p.isOpen(2, 4));
-        assertFalse(p.percolates());
-
-        assertFalse(p.connected(9, 8));
-    }
-
 }

@@ -22,14 +22,18 @@ public class PercolationStats {
         int gridSize = n * n;
 
         for (int i = 0; i < trials; i++) {
-            // state variable to track how many sites are open
-            double opened = 0d;
-            Percolation p = new Percolation(n);
+            // Generate an array and shuffle to randomize site opening
+            int[] randomSiteIndexes = new int[gridSize];
+            for (int j = 0; j < gridSize; j++) randomSiteIndexes[j] = j + 1;
+            StdRandom.shuffle(randomSiteIndexes);
 
-            while (!p.percolates()) {
-                Site site = findRandomClosedSite(p);
+            double opened = 1d;
+            Percolation p = new Percolation(n);
+            for (int k = 0; k < gridSize; k++, opened++) {
+                Site site = oneDtoXY(randomSiteIndexes[k]);
                 p.open(site.row, site.col);
-                opened++;
+                if (p.percolates())
+                    break;
             }
 
             double percolationThreshold = opened / gridSize;
@@ -46,14 +50,16 @@ public class PercolationStats {
         }
     }
 
-    private Site findRandomClosedSite(Percolation p) {
-        int row = StdRandom.uniform(1, this.n);
-        int col = StdRandom.uniform(1, this.n);
-        while (p.isOpen(row, col)) {
-            row = StdRandom.uniform(1, this.n);
-            col = StdRandom.uniform(1, this.n);
+    private Site oneDtoXY(int idx) {
+        int row, col;
+        int mod = idx % this.n;
+        if (mod == 0) {
+            col = this.n;
+            row = idx / this.n;
+        } else {
+            col = mod;
+            row = (idx / this.n) + 1;
         }
-
         return new Site(row, col);
     }
 
