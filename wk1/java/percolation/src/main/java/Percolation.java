@@ -1,13 +1,12 @@
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /** Created by tadamski on 10/30/16. */
-@SuppressWarnings("WeakerAccess")
 public class Percolation {
 
     private final int n;
 
     private final int virtualTop;
-    private final int virtualBottom;
+    private final int firstBottomRow;
     private final int matrixSize;
     private final boolean[] opened;
     private final WeightedQuickUnionUF wqu;
@@ -19,23 +18,25 @@ public class Percolation {
 
         this.matrixSize = n * n;
         this.virtualTop = 0;
-        this.virtualBottom = this.matrixSize + 1;
 
-        int bottomRowMin = this.matrixSize - n;
+        this.firstBottomRow = this.matrixSize + 1 - n;
 
 
         // The top and bottom rows should be linked to the virtual top/bottom nodes
-        int quickUnionSize = this.matrixSize + 2;
+        int quickUnionSize = this.matrixSize + 1;
         this.wqu = new WeightedQuickUnionUF(quickUnionSize);
         for (int i = 0; i < quickUnionSize; i++) {
             if (i <= n) this.wqu.union(virtualTop, i);
-            else if (i >= bottomRowMin) this.wqu.union(virtualBottom, i);
         }
 
         // Pad the opened array so we can use 1 based indexing like the matrix
         int openedSize = this.matrixSize + 1;
         this.opened = new boolean[openedSize];
         for (int i = 0; i < openedSize; i++) this.opened[i] = false;
+    }
+
+    public boolean connected(int p, int q) {
+        return this.wqu.connected(p, q);
     }
 
     /** open site (row, col) if it is not open already */
@@ -52,26 +53,30 @@ public class Percolation {
             }
 
             // Connect right if open and a neighbor
-            int leftIdx = currentIdx - 1;
-            if (leftIdx > 0) {
-                int leftMod = leftIdx % this.n;
-                if ((leftMod != 0) && (leftMod < currentMod) && this.opened[leftIdx]) {
-                    this.wqu.union(currentIdx, leftIdx);
+            if (currentMod != 1) {
+                int leftIdx = currentIdx - 1;
+                if (leftIdx > 0) {
+                    int leftMod = leftIdx % this.n;
+                    if ((leftMod != 0) && (leftMod < currentMod) && this.opened[leftIdx]) {
+                        this.wqu.union(currentIdx, leftIdx);
+                    }
                 }
             }
 
             // Connect bottom if open and within bounds
             int bottomIdx = currentIdx + this.n;
-            if ((bottomIdx < this.matrixSize) && this.opened[bottomIdx]) {
+            if ((bottomIdx <= this.matrixSize) && this.opened[bottomIdx]) {
                 this.wqu.union(currentIdx, bottomIdx);
             }
 
             // Connect left if open and a neighbor
-            int rightIdx = currentIdx + 1;
-            if (rightIdx <= this.matrixSize) {
-                int rightMod = rightIdx % this.n;
-                if ((rightMod == 0) || (rightMod > currentMod) && (this.opened[rightIdx])) {
-                    this.wqu.union(currentIdx, rightIdx);
+            if (currentMod != 0) {
+                int rightIdx = currentIdx + 1;
+                if (rightIdx <= this.matrixSize) {
+                    int rightMod = rightIdx % this.n;
+                    if ((rightMod == 0) || (rightMod > currentMod) && (this.opened[rightIdx])) {
+                        this.wqu.union(currentIdx, rightIdx);
+                    }
                 }
             }
 
@@ -90,12 +95,19 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         validateBounds(row, col);
         int currentIdx = xyTo1D(row, col, this.n);
-        return this.opened[currentIdx] && this.wqu.connected(currentIdx, this.virtualTop);
+        boolean connected = this.wqu.connected(currentIdx, this.virtualTop);
+        boolean open = this.opened[currentIdx];
+        return open && connected;
     }
 
     /** does the system percolate? */
     public boolean percolates() {
-        return this.wqu.connected(this.virtualBottom, this.virtualTop);
+        for (int i = this.firstBottomRow; i <= this.matrixSize; i ++) {
+            if (this.wqu.connected(i, this.virtualTop)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int xyTo1D(int row, int col, int n) {
@@ -111,5 +123,5 @@ public class Percolation {
     }
 
     /** test client (optional) */
-    public static void main(String[] args) {}
+    public static void main(String[] args) { }
 }

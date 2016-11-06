@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 /** Created by tadamski on 11/1/16. */
-@SuppressWarnings("WeakerAccess")
 public class PercolationStats {
 
     private final int n;
@@ -28,7 +27,7 @@ public class PercolationStats {
             Percolation p = new Percolation(n);
 
             while (!p.percolates()) {
-                Site<Integer, Integer> site = findRandomClosedSite(p);
+                Site site = findRandomClosedSite(p);
                 p.open(site.row, site.col);
                 opened++;
             }
@@ -47,15 +46,15 @@ public class PercolationStats {
         }
     }
 
-    private Site<Integer,Integer> findRandomClosedSite(Percolation p) {
-        Integer row = StdRandom.uniform(1, this.n);
-        Integer col = StdRandom.uniform(1, this.n);
+    private Site findRandomClosedSite(Percolation p) {
+        int row = StdRandom.uniform(1, this.n);
+        int col = StdRandom.uniform(1, this.n);
         while (p.isOpen(row, col)) {
             row = StdRandom.uniform(1, this.n);
             col = StdRandom.uniform(1, this.n);
         }
 
-        return new Site<>(row, col);
+        return new Site(row, col);
     }
 
     /** sample mean of percolation threshold */
@@ -96,11 +95,11 @@ public class PercolationStats {
         StdOut.println("95% confidence interval = " + confidenceLow + ", " + confidenceHi);
     }
 
-    public class Site<Row, Col> {
-        public final Row row;
-        public final Col col;
+    private class Site {
+        private final int row;
+        private final int col;
 
-        public Site(Row row, Col col) {
+        public Site(int row, int col) {
             this.row = row;
             this.col = col;
         }
