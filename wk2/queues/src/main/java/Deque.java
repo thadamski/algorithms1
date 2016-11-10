@@ -1,3 +1,6 @@
+import java.util.Iterator
+import java.util.NoSuchElementException;
+
 /**
  * Linked List implementation of the Deque funtion
  *
@@ -5,7 +8,7 @@
  */
 public class Deque<Item> implements Iterable<Item> {
 
-    private
+    private Node first;
 
     /** construct an empty deque */
     public Deque() {
@@ -44,7 +47,7 @@ public class Deque<Item> implements Iterable<Item> {
     
     /** return an iterator over items in order from front to end */
     public Iterator<Item> iterator() {
-        throw new UnsupportedOperationException();
+        return new ListIterator();
     }
 
     /** unit testing */
@@ -54,11 +57,34 @@ public class Deque<Item> implements Iterable<Item> {
 
     /** Internal reference class for Linked List implementation */
     private class Node {
-        private final String item;
+        private final Item item;
         private final Node next;
-        private Node(String item, Node next) {
+        private Node(Item item, Node next) {
             this.item = item;
             this.next = next;
+        }
+    }
+
+    private class ListIterator implements Iterator<Item> {
+
+        private Node current = first;
+
+        @Override
+        public boolean hasNext() { return current.next != null; }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            else {
+                Item item = current.item;
+                current = current.next;
+                return item;
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
