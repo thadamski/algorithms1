@@ -8,41 +8,134 @@ import java.util.NoSuchElementException;
  */
 public class Deque<Item> implements Iterable<Item> {
 
-    private Node first;
+    private int n; // size of the stack
+    private Node first; // top of stack
+    private Node last; // bottom of stack
+
+    /** Internal reference class for Linked List implementation */
+    // helper linked list class
+    private class Node {
+        private Item item;
+        private Node next;
+        private Node prev;
+    }
 
     /** construct an empty deque */
     public Deque() {
-        throw new UnsupportedOperationException();
+        first = null;
+        last = null;
+        n = 0;
+
+        assert check();
     }
 
     /** is the deque empty? */
     public boolean isEmpty() {
-        throw new UnsupportedOperationException();
+        return this.n == 0;
     }
     
     /** return the number of items on the deque */
     public int size() {
-        throw new UnsupportedOperationException();
+        return this.n;
     }
     
     /** add the item to the front */
     public void addFirst(Item item) {
-        throw new UnsupportedOperationException();
+        Node oldFirst = this.first;
+
+        this.first = new Node();
+        this.first.item = item;
+
+        if (this.isEmpty()) {
+            this.first.prev = null;
+            this.first.next = null;
+
+            this.last = this.first;
+        } else if (this.n == 1) {
+            this.first.next = oldFirst;
+            this.first.prev = null;
+
+            this.last.prev = this.first;
+            this.last.next = null;
+        } else {
+            oldFirst.prev = this.first;
+            this.first.next = oldFirst;
+        }
+
+        this.n++;
     }
     
     /** add the item to the end */
     public void addLast(Item item) {
-        throw new UnsupportedOperationException();
+        Node oldLast = this.last;
+
+        this.last = new Node();
+        this.last.item = item;
+
+        if (this.isEmpty()) {
+            this.last.next = null;
+            this.last.prev = null;
+
+            this.first = this.last;
+        } else if (this.n == 1) {
+            this.last.prev = oldLast;
+            this.last.next = null;
+
+            this.first.next = this.last;
+            this.first.prev = null;
+        } else {
+            oldLast.next = this.last;
+            this.last.prev = oldLast;
+        }
+
+        n++;
     }
     
     /** remove and return the item from the front */
     public Item removeFirst() {
-        throw new UnsupportedOperationException();
+        if (isEmpty()) throw new NoSuchElementException("Stack underflow");
+
+        Item oldFirst = this.first.item;
+
+        if (this.n == 1) {
+            this.first = null;
+            this.last = null;
+        } else if (this.n == 2) {
+            this.first = this.first.next;
+            this.first.prev = null;
+
+            this.last.prev = null;
+        } else {
+            this.first = this.first.next;
+            this.first.prev = null;
+        }
+
+        n--;
+
+        return oldFirst;
     }
     
     /** remove and return the item from the end */
     public Item removeLast() {
-        throw new UnsupportedOperationException();
+        if (isEmpty()) throw new NoSuchElementException("Stack underflow");
+
+        Item oldLast = this.last.item;
+
+        if (this.n == 1) {
+            this.first = null;
+            this.last = null;
+        } else if (this.n == 2) {
+            this.last = this.last.prev;
+            this.last.next = null;
+
+            this.first.next = null;
+        } else {
+            this.last = this.last.prev;
+            this.last.next = null;
+        }
+
+        n--;
+        return oldLast;
     }
     
     /** return an iterator over items in order from front to end */
@@ -55,24 +148,41 @@ public class Deque<Item> implements Iterable<Item> {
         throw new UnsupportedOperationException();
     }
 
-    /** Internal reference class for Linked List implementation */
-    private class Node {
-        private final Item item;
-        private final Node next;
-        private Node(Item item, Node next) {
-            this.item = item;
-            this.next = next;
+    // check internal invariants
+    private boolean check() {
+        if (n < 0) return false;
+
+        if (n == 0) {
+            if (first != null && last != null) return false;
+        } else if (n == 1) {
+            if (first == null || last == null) return false;
+            if (first.next != null || first.prev != null || last.next != null || last.prev != null) return false;
+        } else {
+            if (first == null || last == null) return false;
+            if (first.next == null || first.prev != null || last.next != null || last.prev == null) return false;
         }
+
+        int numberOfNodes = 0;
+        for (Node x = first; x != null && numberOfNodes <= n; x = x.next) {
+            numberOfNodes++;
+        }
+        if (numberOfNodes != n) return false;
+
+        numberOfNodes = 0;
+        for (Node x = last; x != null && numberOfNodes <= n; x = x.next) {
+            numberOfNodes++;
+        }
+        if (numberOfNodes != n) return false;
+
+        return true;
     }
 
     private class ListIterator implements Iterator<Item> {
 
         private Node current = first;
 
-        @Override
-        public boolean hasNext() { return current.next != null; }
-
-        @Override
+        public void remove() { throw new UnsupportedOperationException(); }
+        public boolean hasNext() { return current != null; }
         public Item next() {
             if (!hasNext()) throw new NoSuchElementException();
             else {
@@ -80,11 +190,6 @@ public class Deque<Item> implements Iterable<Item> {
                 current = current.next;
                 return item;
             }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
         }
     }
 }
