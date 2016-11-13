@@ -41,6 +41,8 @@ public class Deque<Item> implements Iterable<Item> {
     
     /** add the item to the front */
     public void addFirst(Item item) {
+        if (item == null) throw new NullPointerException("Null values not allowed");
+
         Node oldFirst = this.first;
 
         this.first = new Node();
@@ -67,6 +69,8 @@ public class Deque<Item> implements Iterable<Item> {
     
     /** add the item to the end */
     public void addLast(Item item) {
+        if (item == null) throw new NullPointerException("Null values not allowed");
+
         Node oldLast = this.last;
 
         this.last = new Node();
@@ -172,9 +176,8 @@ public class Deque<Item> implements Iterable<Item> {
         for (Node x = last; x != null && numberOfNodes <= n; x = x.next) {
             numberOfNodes++;
         }
-        if (numberOfNodes != n) return false;
 
-        return true;
+        return numberOfNodes == n;
     }
 
     private class ListIterator implements Iterator<Item> {
