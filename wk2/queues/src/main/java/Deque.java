@@ -2,7 +2,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * Linked List implementation of the Deque funtion
+ * Linked List implementation of the Deque function
  *
  * Created by tadamski on 11/9/16.
  */
