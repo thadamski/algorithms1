@@ -1,5 +1,6 @@
 import junit.framework.TestCase;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -20,6 +21,22 @@ public class PointTest extends TestCase {
         assertEquals(GREATER_THAN, new Point(-10, 10).compareTo(new Point(-10, 9)));
         assertEquals(EQUAL, new Point(-10, 10).compareTo(new Point(-10, 10)));
         assertEquals(LESS_THAN, new Point(-10, 10).compareTo(new Point(-10, 11)));
+    }
+
+    public void testArraySortPoints() {
+        Point[] ps = {
+            new Point(2, 0),
+            new Point(0, 0),
+            new Point(1, 0),
+            new Point(-1, 0)
+        };
+
+        Arrays.sort(ps);
+
+        assertEquals(new Point(-1, 0).toString(), ps[0].toString());
+        assertEquals(new Point(0, 0).toString(), ps[1].toString());
+        assertEquals(new Point(1, 0).toString(), ps[2].toString());
+        assertEquals(new Point(2, 0).toString(), ps[3].toString());
     }
 
     public void testSlopeTo() {

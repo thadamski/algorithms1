@@ -14,7 +14,6 @@ import edu.princeton.cs.algs4.StdDraw;
 public class Point implements Comparable<Point> {
 
     protected static final double POSITIVE_ZERO = (1 - 1) / 1;
-    protected static final double NEGATIVE_ZERO = (1 - 1) / -1;
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
@@ -82,8 +81,10 @@ public class Point implements Comparable<Point> {
      */
     public int compareTo(Point that) {
         if (this.y < that.y) return -1;
-        else if (this.y == that.y) return that.x - this.x;
-        else return 1;
+        else if (this.y > that.y) return 1;
+        else if (this.x < that.x) return -1;
+        else if (this.x > that.x) return 1;
+        else return 0;
     }
 
     private Comparator<Point> slopeOrderComparator = (Point o1, Point o2) -> {
