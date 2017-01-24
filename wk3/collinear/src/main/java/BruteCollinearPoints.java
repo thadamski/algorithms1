@@ -1,4 +1,7 @@
-import javax.sound.sampled.Line;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,12 +12,15 @@ import java.util.Stack;
  */
 public class BruteCollinearPoints {
 
-    private final LineSegment[] lineSegments;
+    private final List<LineSegment> lineSegmentsList = new ArrayList<>();
+    private LineSegment[] lineSegments;
+
+    private Stack<Point> pointStack = new Stack<>();
+    private Double currentSlope;
 
     /** finds all line segments containing 4 points */
     public BruteCollinearPoints(Point[] points) {
         if (points == null) throw new NullPointerException();
-        if (points.length != 4) throw new IllegalArgumentException("Points must be of length 4");
 
         // Ensure all points are non-null
         for (Point p : points) {
@@ -24,7 +30,20 @@ public class BruteCollinearPoints {
         assertNoDuplicates(points);
 
         Arrays.sort(points);
-        this.lineSegments = compressSegments(generateSegments(points));
+
+        int pointsLength = points.length;
+        if (pointsLength > 4) {
+            for (int i = 0; i < pointsLength - 3; i++) {
+                for (int j = 1; j < pointsLength - 2; j++) {
+                    for (int k = 2; k < pointsLength - 1; k++) {
+                        for (int l = 3; l < pointsLength; l++) {
+                            pointsToSegments(points[i], points[j], points[k], points[l]);
+                        }
+                    }
+                }
+            }
+
+        }
     }
 
     private void assertNoDuplicates(Point[] points) {
@@ -40,7 +59,7 @@ public class BruteCollinearPoints {
 
     /** the number of line segments */
     public int numberOfSegments() {
-        return this.lineSegments.length;
+        return this.segments().length;
     }
 
     /**
@@ -55,40 +74,77 @@ public class BruteCollinearPoints {
      * BruteCollinearPoints that has 5 or more collinear points.
      * */
     public LineSegment[] segments() {
+        if (this.lineSegments == null) {
+            Double slope = null;
+            Point first = null;
+            for (int i = 0; i < this.pointStack.size() - 1; i++) {
+                for (int j = 1; j < this.pointStack.size(); j++) {
+                    Point p0 = this.pointStack.pop();
+                    Point p1 = this.pointStack.pop();
+                }
+            }
+            this.lineSegments = this.lineSegmentsList.toArray(new LineSegment[this.lineSegmentsList.size()]);
+        }
         return this.lineSegments;
     }
 
-    private LineSegment[] generateSegments(Point[] points) {
-        Stack<Point> ps = new Stack<>();
-        Point p0 = points[0];
-        Point p1 = points[1];
-        ps.push(p0);
-        ps.push(p1);
-
-        double slope = p0.slopeTo(p1);
-        for (int i = 2; i < points.length; i++) {
-            Point top = ps.pop();
-            Point nextPoint = points[i];
-            if (top.slopeTo(nextPoint) != slope) break;
-            else {
-                ps.push(nextPoint);
+    private void pointsToSegments(Point p0, Point p1, Point p2, Point p3) {
+        if (this.currentSlope != null) {
+            this.currentSlope = p0.slopeTo(p1);
+            if (p1.slopeTo(p2) == this.currentSlope && p2.slopeTo(p3) == this.currentSlope) {
+                this.pointStack.push(p0);
+                this.pointStack.push(p1);
             }
-        }
-
-        if (ps.size() == 2) {
-            Point last = ps.pop();
-            Point first = ps.pop();
-            LineSegment[] ls = new LineSegment[1];
-            ls[0] = new LineSegment(first, last);
-            return ls;
         } else {
-            return new LineSegment[0];
+            Point topPoint = this.pointStack.pop();
+            if (topPoint.slopeTo(p0) == this.currentSlope) {
+                if (p0.slopeTo(p1) == this.currentSlope) {
+                    if (p1.slopeTo(p2) == this.currentSlope) {
+                        if (p2.slopeTo(p3) == this.currentSlope) {
+                            this.pointStack.push(p3);
+                        } else {
+                            this.pointStack.push(p2);
+                        }
+                    } else {
+                        this.pointStack.push(p1);
+                    }
+                } else {
+                    this.pointStack.push(p0);
+                }
+            } else {
+                this.pointStack.push(topPoint);
+            }
         }
     }
 
-    private LineSegment[] compressSegments(LineSegment[] segments) {
+    public static void main(String[] args) {
 
-        return segments;
+        // read the n points from a file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            int x = in.readInt();
+            int y = in.readInt();
+            points[i] = new Point(x, y);
+        }
+
+        // draw the points
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(0, 32768);
+        StdDraw.setYscale(0, 32768);
+        for (Point p : points) {
+            p.draw();
+        }
+        StdDraw.show();
+
+        // print and draw the line segments
+        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+        for (LineSegment segment : collinear.segments()) {
+            StdOut.println(segment);
+            segment.draw();
+        }
+        StdDraw.show();
     }
 
 }
